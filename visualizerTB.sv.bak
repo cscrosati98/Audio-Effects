@@ -1,0 +1,28 @@
+`timescale 1ns/1ns
+module visualizerTB();
+logic [31:0] lsamp=32'd0;
+logic [31:0] rsamp=32'd0;
+logic [31:0] lsampout, rsampout;
+logic [31:0] [31:0] lsound, rsound;
+logic clock=1'b0;
+logic slowclock=1'b0;
+logic reset=1'b1;
+
+`include "soundTasks.sv";
+
+visualizer vistb(.inleft(lsamp), .inright(rsamp), //module that reduces the sample rate by using a slower clock
+                    .reset(reset), .clock(clock),
+                    .outleft(lsampout), .outright(rsampout));	
+
+
+always #5 clock <= ~clock;
+always #10 slowclock <= ~slowclock;
+always #15 reset<=~reset;
+initial begin
+
+randomSound();
+processSample();
+
+end
+
+endmodule

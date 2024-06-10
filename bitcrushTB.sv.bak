@@ -1,0 +1,59 @@
+`timescale 1ns/1ns
+module bitcrushTB();
+
+task randomSound(output logic [31:0] lsound, rsound);
+	lsound<=$urandom_range(32'b4294967295,32'b000);
+	rsound<=$urandom_range(32'b4294967295,32'b000);
+endtask
+task rdTest();
+	sw=1'b0;
+	@(negedge clock);
+	en<=1'b1;
+	@(negedge clock);
+	en<=1'b0;
+	@(negedge clock);
+	#1 ra: assert(ren==1'b1&&wen==1'b0) begin
+		$display("Read works! RA: %h WA: %h", r_add, w_add); end
+		else begin 
+		$display("Read didn't work! IR: %b WR: %b", ren, wen); end
+	@(negedge clock);
+endtask
+task wrTest();
+	sw=1'b1;
+	@(negedge clock);
+	en<=1'b1;
+	@(negedge clock);
+	en<=1'b0;
+	@(negedge clock);
+	#1 wr: assert(ren==1'b0&&wen==1'b1) begin
+		$display("Write works! RA: %h WA: %h", r_add, w_add); end
+		else begin 
+		$display("Write didn't work! IR: %b WR: %b", ren, wen); end
+	@(negedge clock);
+endtask
+
+task waitTest();
+	sw=1'b0;
+	en=1'b0;
+	//fifoFull=1'b0;
+	//fifoEmpty=1'b0;
+endtask
+
+controlFSM tst(.sw(sw), .en(en), .fifoFull(fifoFull), .fifoEmpty(fifoEmpty), .clock(clock), .ren(ren), .wen(wen),
+	.w_add(w_add),.r_add(r_add));
+
+always #5 clock <= ~clock;
+
+initial begin
+
+rdTest();
+repeat(10) wrTest();
+
+repeat(10) rdTest();
+waitTest();
+repeat(10) wrTest();
+
+
+end
+
+endmodule

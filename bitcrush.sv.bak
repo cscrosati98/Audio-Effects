@@ -1,0 +1,19 @@
+module bitcrush(input logic [32:1] inleft, inright,
+                    input logic clock,
+                    output logic [32:1] outleft, outright);
+
+                    int i, j;
+
+                    always_ff @(posedge clock) begin
+                    for (i = 1; i <= 32; i = i + 2) begin
+                        outleft[i] <= 1'b0;
+                        outright[i] <= 1'b0;
+                    end
+
+                    for (j = 2; j <= 32; j = j + 2) begin
+                        outleft[j] <= (inleft[j]  inleft[j-1]);
+                        outright[j] <= (inright[j]  inright[j-1]);
+                    end
+
+                    end
+endmodule

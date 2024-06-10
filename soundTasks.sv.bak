@@ -1,0 +1,16 @@
+task randomSound();
+	for(int i=0; i<32; i++)begin
+	 lsound[i]<=$urandom_range(32'd0,32'd4294967295);//lsamp;
+	 rsound[i]<=$urandom_range(32'd0,32'd4294967295);//rsamp;
+	 
+	 #5 $display("Left: %d Right: %d", lsound[i], rsound[i]);
+	end
+endtask
+task processSample();
+	for(int i=0; i<32; i++) begin
+	@(posedge clock);
+	lsamp<=lsound[i];
+	rsamp<=rsound[i];
+	$display("Lout: %d Rout: %d", lsampout,rsampout);
+	end
+endtask

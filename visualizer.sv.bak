@@ -1,0 +1,15 @@
+module visualizer(input logic clock,
+						input logic [31:0] right, left,
+						output logic [17:0] lights);
+						
+						
+		logic [31:0] comb;
+		always_comb begin
+		comb<= right | left;
+		end
+		always_ff @(posedge clock) begin
+		lights<comb;
+		
+		end
+
+endmodule

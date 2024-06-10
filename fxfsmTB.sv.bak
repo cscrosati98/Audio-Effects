@@ -1,0 +1,21 @@
+`timescale 1ns/1ns
+module fxfsmTB();
+
+`include "soundTasks.sv";
+
+fsxfsm fxtb(.right(rsamp), .left(lsamp), //module that reduces the sample rate by using a slower clock
+                    .reset(reset), .clock(slowclock),
+                    .lights(lights));	
+						  
+always #5 clock <= ~clock;
+always #10 slowclock <= ~slowclock;
+always #5000 reset<=~reset;
+initial begin
+#10 reset<=~reset;
+#10 reset<=~reset;
+randomSound();
+visualizerOut();
+
+end
+
+endmodule

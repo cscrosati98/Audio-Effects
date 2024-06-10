@@ -1,0 +1,59 @@
+module fxfsm(input logic clock, 
+					input logic [3:0] SEL,
+					input logic [31:0] leftin,rightin,
+					outputlogic [31:0] leftout,rightout);
+					
+	logic [31:0] leftbc,rightbc;
+				
+	typedef enum logic [3:0] {IDLE, BCRUSH} statetype;
+	
+	statetype presentState = LINE, nextState;
+	
+	always_ff@(posedge clock)
+		begin
+			presentState<=nextState;
+		end
+	always_comb
+		begin
+			case(presentState)
+			
+			IDLE: if(SEL==4'b0001)
+			
+							nextState<=BCRUSH;
+							
+					else
+					
+							nextState<=IDLE;
+	
+							
+			BCRUSH: if(SEL==4'b0000)
+			
+							nextState<=IDLE;
+							
+					else
+					
+							nextState<=BCRUSH;
+						
+			endcase
+		end
+		
+	always_comb
+		begin
+			case(presentState)
+			
+			IDLE: begin
+			leftout<=leftin;
+			rightout<=rightin;
+			end
+			
+							
+			BCRUSH: begin
+			leftout<=bcleft;
+			rightout<=bcright;
+			end
+						
+			endcase
+		end
+bitcrush bc(.inright(rightin), .inleft(leftin),.clock(bcclock),.outright(right),.outleft(left));				
+
+endmodule

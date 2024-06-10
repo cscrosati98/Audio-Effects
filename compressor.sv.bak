@@ -1,0 +1,20 @@
+module compressor(input logic [31:0] inleft, inright,
+                        input logic clock,
+                        output logic [31:0] outleft, outright);
+
+                        logic [31:0]threshold = 32'd1147483648;
+
+                        always_ff @(posedge clock) begin
+                            if ((inleft+inright) / 2 > threshold) begin
+                                outleft <= inleft / 4;
+                                outright <= inright / 4;
+
+                            end
+
+                            else begin
+                                outleft <= inleft;
+                                outright <= inright;
+                            end
+
+                        end
+endmodule
